@@ -51,7 +51,7 @@ while read line
         INDEX=`expr $INDEX + 1`
         done
  
-    montage "$PATH_TO_PIC"pic[1-`expr $INDEX - 1`].jpg -tile x1 -geometry +$HALF_BORDER+$HALF_BORDER "$PATH_TO_PIC"row$ROW_NUMBER.jpg    
+    montage "$PATH_TO_PIC"pic[1-`expr $INDEX - 1`].jpg -mode Concatenate -border $HALF_BORDER -bordercolor White -tile x1 "$PATH_TO_PIC"row$ROW_NUMBER.jpg    
     ROW_NUMBER=`expr $ROW_NUMBER + 1`   
     done <$TEXT_FILE
 
