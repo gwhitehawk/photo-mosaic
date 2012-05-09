@@ -1,0 +1,15 @@
+Requirements: Python, ImageMagick (I tested scripts only on Linux)
+
+Usage: 
+Edit mosaic.sh: 
+PATH_TO_PIC=[ name of your photo directory ]
+RESULT=[ name of the resulting mosaic file ]
+
+Source text file format example:
+pic1 pic2
+pic3 
+
+In the resulting mosaic, 2 photos will be in the first row, one in the second row.
+
+Run:
+./mosaic.sh [source text file] [final picture width] [ picture border (=space between photos and around them) ]
