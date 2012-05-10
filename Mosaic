@@ -57,7 +57,7 @@ def write_factors(input_file, final_width, border):
             first = 0
         
         for cell in row:
-            f.write("%d " % (cell*100))  
+            f.write("%0.4f " % (cell*100))  
     
     f.write("\n")
     f.close()
