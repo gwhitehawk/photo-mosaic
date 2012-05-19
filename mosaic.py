@@ -3,8 +3,9 @@ import re
 import os
 import sys
 
-def get_sizes(filename):
-    f = open(filename, "r")
+def get_sizes():
+    input = "sizes.txt"
+    f = open(input, "r")
     result = []
     row = []
     for line in f.readlines():
@@ -19,8 +20,8 @@ def get_sizes(filename):
     f.close()
     return result
 
-def scale_factors(filename, final_width, border):
-    matrix = get_sizes(filename)
+def scale_factors(final_width, border):
+    matrix = get_sizes()
     result = []
     for row in matrix:
         row_length = len(row)
@@ -42,11 +43,11 @@ def scale_factors(filename, final_width, border):
     
     return result
 
-def write_factors(input_file, final_width, border):
-    filename = "scale_factors.txt"
-    f = open(filename, "w")
+def write_factors(final_width, border):
+    output = "scale_factors.txt"
+    f = open(output, "w")
     
-    matrix = scale_factors(input_file, final_width, border)
+    matrix = scale_factors(final_width, border)
     
     first = 1
     for row in matrix:
@@ -62,8 +63,7 @@ def write_factors(input_file, final_width, border):
     f.write("\n")
     f.close()
 
-input_file = sys.argv[1]
-final_width = int(sys.argv[2])
-border = int(sys.argv[3])
+final_width = int(sys.argv[1])
+border = int(sys.argv[2])
 
-write_factors(input_file, final_width, border)
+write_factors(final_width, border)
