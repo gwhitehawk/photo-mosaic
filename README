@@ -13,3 +13,5 @@ In the resulting mosaic, 2 photos will be in the first row, one in the second ro
 
 Run:
 ./mosaic.sh [source text file] [final picture width] [ picture border (=space between photos and around them) ]
+
+Todo: GUI, choice between custom and optimized tiling
