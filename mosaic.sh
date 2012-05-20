@@ -4,7 +4,6 @@ PARAM_FILE="param.txt"
 
 OUTPUT="sizes.txt"
 SCALE_FACTORS="scale_factors.txt"
-RESULT="mosaic"
 PATH_TO_PIC="img"
 
 if [ -f $OUTPUT ] 
@@ -22,6 +21,7 @@ java Mosaic
 
 MOSAIC_WIDTH=$(awk 'NR==1' $PARAM_FILE)
 BORDER=$(awk 'NR==2' $PARAM_FILE)
+TARGET=$(awk 'NR==3' $PARAM_FILE)
 
 while read line
     do
@@ -65,10 +65,17 @@ while read line
     ROW_NUMBER=`expr $ROW_NUMBER + 1`   
     done <$SOURCE_FILE
 
-montage "$PATH_TO_PIC"/row[1-`expr $ROW_NUMBER - 1`].jpg -tile 1x -geometry +0+0 "$PATH_TO_PIC"/$RESULT.jpg
-convert "$PATH_TO_PIC"/$RESULT.jpg -bordercolor White -border $HALF_BORDER "$PATH_TO_PIC"/$RESULT.jpg
+montage "$PATH_TO_PIC"/row[1-`expr $ROW_NUMBER - 1`].jpg -tile 1x -geometry +0+0 $TARGET
+convert "$PATH_TO_PIC"/$RESULT.jpg -bordercolor White -border $HALF_BORDER $TARGET
 
-rm $SOURCE_FILE
-rm $PARAM_FILE 
-rm $OUTPUT
-rm $SCALE_FACTORS
+rm "$PATH_TO_PIC"/pic*
+rm "$PATH_TO_PIC"/row*
+
+CLEAN_UP=( $SOURCE_FILE, $PARAM_FILE, $OUTPUT, $SCALE_FACTORS )
+for FILE in $CLEAN_UP
+do
+    if [ -f $FILE ]
+    then
+        rm $FILE
+    fi
+done

@@ -64,7 +64,7 @@ class CheckBoxList extends JPanel {
 
         ImageIcon icon = new ImageIcon(image.getPath());
         Image img = icon.getImage();  
-        Image thumb = img.getScaledInstance(100, 67,  java.awt.Image.SCALE_SMOOTH);  
+        Image thumb = img.getScaledInstance(100, 67,  java.awt.Image.SCALE_FAST);  
         ImageIcon thumbIcon = new ImageIcon(thumb);  
         JLabel imageThumb = new JLabel(thumbIcon);
        
@@ -82,7 +82,7 @@ public class Mosaic extends JFrame
        implements ActionListener
 {
     JMenuItem fMenuOpen = null;
-    JMenuItem fMenuSave  = null;
+    JMenuItem fMenuApply  = null;
     JMenuItem fMenuClose = null;
 
     //JTextArea checkBoxArea;
@@ -99,7 +99,7 @@ public class Mosaic extends JFrame
     ArrayList<String> photoList = new ArrayList<String>();
 
     /** Routines: printToFile. **/
-    static boolean printToFile(String data, String filename, boolean append) {
+    private static boolean printToFile(String data, String filename, boolean append) {
         try {
             FileOutputStream out = new FileOutputStream(filename, append);
             PrintStream pPrint = new PrintStream(out);
@@ -185,7 +185,8 @@ public class Mosaic extends JFrame
         // Modify task names to something relevant to
         // the particular program.
         m.add(fMenuOpen  = makeMenuItem("Add"));
-        m.add(fMenuClose = makeMenuItem("Apply"));
+        m.add(fMenuApply = makeMenuItem("Apply"));
+        m.add(fMenuClose = makeMenuItem("Quit"));
 
         JMenuBar mb = new JMenuBar();
         mb.add(m);
@@ -213,6 +214,8 @@ public class Mosaic extends JFrame
         } else if (command.equals("Apply")) {
             status = saveParams();
             dispose();
+        } else if (command.equals("Quit")) {
+            dispose();
         }
     } // actionPerformed
 
@@ -225,22 +228,31 @@ public class Mosaic extends JFrame
         return m;
     } // makeMenuItem
 
-    /** Creates arraylist of mosaic pictures. **/
-    boolean addFile() {
+    /** Open file chooser. **/
+    private JFileChooser fileChooserDialog(String title, String currentDir) {
         JFileChooser fc = new JFileChooser();
-        fc.setDialogTitle("Add File");
+        fc.setDialogTitle(title);
 
         // Choose only files, not directories
         fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-
-        // Start in current directory
-        if (photoList.isEmpty())
-            fc.setCurrentDirectory(new File("."));
-        else 
-            fc.setCurrentDirectory(new File(photoList.get(photoList.size()-1)));
-
+        
+        fc.setCurrentDirectory(new File(currentDir));
+        
         // Set filter for Java source files.
         fc.setFileFilter(fImageFilter);
+        return fc;
+    }
+
+    /** Creates arraylist of mosaic pictures. **/
+    boolean addFile() {
+        String currentDir;
+        //Start in last accessed directory
+        if (photoList.isEmpty())
+            currentDir = ".";
+        else
+            currentDir = photoList.get(photoList.size()-1);
+
+        JFileChooser fc = fileChooserDialog("Add File", currentDir);
 
         // Now open chooser
         int result = fc.showOpenDialog(this);
@@ -265,9 +277,10 @@ public class Mosaic extends JFrame
         String width =  widthField.getText();
         String border = borderField.getText();
         Component[] components = checkBoxArea.getComponents();
-
-        for (int i = components.length-2; i >= 0; i=i-2) {
-            if (components[i] instanceof JCheckBox && ! ((JCheckBox)components[i]).isSelected()) 
+        int startPhotoNum = photoList.size();
+        
+        for (int i = startPhotoNum - 1; i >= 0; i--) {
+            if (components[2*i] instanceof JCheckBox && ! ((JCheckBox)components[2*i]).isSelected())
                 photoList.remove(i);
         }
 
@@ -293,7 +306,21 @@ public class Mosaic extends JFrame
 
         success = printToFile(width, paramFile, false);
         success = success && printToFile(border, paramFile, true);
-        
+       
+        JFileChooser fc = fileChooserDialog("Save As", ".");
+
+        // Open chooser
+        int result = fc.showSaveDialog(this);
+
+        if (result  == JFileChooser.CANCEL_OPTION) {
+            return true;        
+        } else if (result == JFileChooser.APPROVE_OPTION) { 
+            File targetFile = fc.getSelectedFile();
+            success = success && printToFile(targetFile.getPath(), paramFile, true);
+        } else {
+            return false;
+        }
+
         return success;
     } // saveParams
 
