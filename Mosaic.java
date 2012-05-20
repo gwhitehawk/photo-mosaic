@@ -85,11 +85,15 @@ public class Mosaic extends JFrame
     JMenuItem fMenuApply  = null;
     JMenuItem fMenuClose = null;
 
-    //JTextArea checkBoxArea;
     CheckBoxList checkBoxArea;
+    JScrollPane checkScroll;
     JTextField layoutField;
     JTextField widthField;
     JTextField borderField;
+
+    JLabel layoutLabel;
+    JLabel widthLabel;
+    JLabel borderLabel;
 
     ImageFilter fImageFilter = new ImageFilter();
     File fFile = new File ("default");
@@ -112,35 +116,14 @@ public class Mosaic extends JFrame
 
         return true;
     }   
-
-    /** Create a frame with param text fields, editable 
-    *   checkbox list, and "File" dropdown menu
-    **/
-    Mosaic(String title) {
-        super(title);
-
-        Container content_pane = getContentPane();
-
-        // Create a user interface.
-        
-        // Components
-        checkBoxArea = new CheckBoxList();
-        JScrollPane checkScroll = new JScrollPane(checkBoxArea); 
-        layoutField = new JTextField(50);
-        widthField = new JTextField(50);
-        borderField = new JTextField(50);
-
-        JLabel layoutLabel = new JLabel("Layout:");
-        JLabel widthLabel = new JLabel("Mosaic Width:");
-        JLabel borderLabel = new JLabel("Border:");
- 
-        // Layout
-        GroupLayout grpLayout = new GroupLayout(content_pane);
-        content_pane.setLayout(grpLayout);
+    
+    /** Layout. **/
+    private GroupLayout layout(Container contentPane) {
+        GroupLayout grpLayout = new GroupLayout(contentPane);
 
         grpLayout.setAutoCreateGaps(true);
         grpLayout.setAutoCreateContainerGaps(true);
-        
+
         grpLayout.setHorizontalGroup(
             grpLayout.createSequentialGroup()
                 .addGroup(grpLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -159,7 +142,7 @@ public class Mosaic extends JFrame
                     .addComponent(checkScroll)
                 )
         );
-        
+
         grpLayout.setVerticalGroup(
             grpLayout.createSequentialGroup()
                 .addGroup(grpLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
@@ -176,7 +159,33 @@ public class Mosaic extends JFrame
                 )
                 .addComponent(checkScroll)
         );
-    
+
+        return grpLayout;
+    }
+
+    /** Create a frame with param text fields, editable 
+    *   checkbox list, and "File" dropdown menu
+    **/
+    Mosaic(String title) {
+        super(title);
+
+        Container contentPane = getContentPane();
+
+        // Create a user interface.
+        
+        // Components
+        checkBoxArea = new CheckBoxList();
+        checkScroll = new JScrollPane(checkBoxArea); 
+        layoutField = new JTextField(50);
+        widthField = new JTextField(50);
+        borderField = new JTextField(50);
+
+        layoutLabel = new JLabel("Layout:");
+        widthLabel = new JLabel("Mosaic Width:");
+        borderLabel = new JLabel("Border:");
+ 
+        contentPane.setLayout(layout(contentPane));
+
         // Use the helper method makeMenuItem
         // for making the menu items and registering
         // their listener.
