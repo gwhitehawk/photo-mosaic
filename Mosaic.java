@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
+import java.lang.Math;
 
 /**
 * App to choose photos for the photo-mosaic with tiling 
@@ -53,7 +54,7 @@ class CheckBoxList extends JPanel {
         setLayout(new GridBagLayout());
         c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.ipadx = 10;
+        c.ipadx = 20;
         c.ipady = 5;
         rowCount = 0;
     }
@@ -85,6 +86,7 @@ public class Mosaic extends JFrame
     JMenuItem fMenuApply  = null;
     JMenuItem fMenuClose = null;
 
+    JCheckBox autoLayout;
     CheckBoxList checkBoxArea;
     JScrollPane checkScroll;
     JTextField layoutField;
@@ -127,6 +129,7 @@ public class Mosaic extends JFrame
         grpLayout.setHorizontalGroup(
             grpLayout.createSequentialGroup()
                 .addGroup(grpLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(autoLayout)
                     .addGroup(grpLayout.createSequentialGroup()
                         .addGroup(grpLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                             .addComponent(layoutLabel)
@@ -145,6 +148,7 @@ public class Mosaic extends JFrame
 
         grpLayout.setVerticalGroup(
             grpLayout.createSequentialGroup()
+                .addComponent(autoLayout)
                 .addGroup(grpLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(layoutLabel)
                     .addComponent(layoutField)
@@ -174,6 +178,7 @@ public class Mosaic extends JFrame
         // Create a user interface.
         
         // Components
+        autoLayout = new JCheckBox("Auto Layout");
         checkBoxArea = new CheckBoxList();
         checkScroll = new JScrollPane(checkBoxArea); 
         layoutField = new JTextField(50);
@@ -294,8 +299,33 @@ public class Mosaic extends JFrame
         }
 
         boolean success;
+        
         int rowIndex = 0;
         String tempBuffer = "";
+        
+        if (autoLayout.isSelected()) {
+            int imgNumber = photoList.size();
+            int rowNumber = (int)Math.sqrt(imgNumber);
+            int colNumber = imgNumber/rowNumber;
+            
+            int[] layoutArr = new int[rowNumber];
+            for (int i = 0; i < rowNumber; i++) 
+                layoutArr[i] = colNumber;
+
+            int imgToPlace = imgNumber - rowNumber * colNumber;
+            
+            Random generator = new Random();
+            for (int i = 0; i < imgToPlace; i++) {
+                int newIndex = generator.nextInt(rowNumber);
+                layoutArr[newIndex]++;
+            }
+            
+            layout = "";
+            for (int i = 0; i < rowNumber; i++)
+                layout += " " + layoutArr[i];
+            
+            layout = layout.trim(); 
+        }
         
         String[] splitRows = layout.split(" ");
         
@@ -311,9 +341,9 @@ public class Mosaic extends JFrame
             }      
         }
 
-        printToFile(tempBuffer, sourceFile, true);
+        success = printToFile(tempBuffer, sourceFile, true);
 
-        success = printToFile(width, paramFile, false);
+        success = success &&printToFile(width, paramFile, false);
         success = success && printToFile(border, paramFile, true);
        
         JFileChooser fc = fileChooserDialog("Save As", ".");

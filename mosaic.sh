@@ -66,13 +66,14 @@ while read line
     done <$SOURCE_FILE
 
 montage "$PATH_TO_PIC"/row[1-`expr $ROW_NUMBER - 1`].jpg -tile 1x -geometry +0+0 $TARGET
-convert "$PATH_TO_PIC"/$RESULT.jpg -bordercolor White -border $HALF_BORDER $TARGET
+convert $TARGET -bordercolor White -border $HALF_BORDER $TARGET
 
 rm "$PATH_TO_PIC"/pic*
 rm "$PATH_TO_PIC"/row*
 
-CLEAN_UP=( $SOURCE_FILE, $PARAM_FILE, $OUTPUT, $SCALE_FACTORS )
-for FILE in $CLEAN_UP
+CLEAN_UP=( $SOURCE_FILE $PARAM_FILE $OUTPUT $SCALE_FACTORS )
+
+for FILE in "${CLEAN_UP[@]}"
 do
     if [ -f $FILE ]
     then
