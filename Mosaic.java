@@ -179,9 +179,14 @@ public class Mosaic extends JFrame
         
         // Components
         autoLayout = new JCheckBox("Auto Layout");
+        autoLayout.setToolTipText("For n photos, creates a ~sqrt(n) x ~sqrt(n) grid.");
+
         checkBoxArea = new CheckBoxList();
         checkScroll = new JScrollPane(checkBoxArea); 
-        layoutField = new JTextField(50);
+        
+        layoutField = new JTextField(100);
+        layoutField.setToolTipText("#Pic in each row, separated by space.");
+
         widthField = new JTextField(50);
         borderField = new JTextField(50);
 
@@ -278,6 +283,9 @@ public class Mosaic extends JFrame
             fFile = fc.getSelectedFile();
             photoList.add(fFile.getPath());
             checkBoxArea.addCheckBox(fFile);
+            int height = (int)checkBoxArea.getPreferredSize().getHeight();
+            checkScroll.getVerticalScrollBar().setValue(height);
+            
             checkBoxArea.setVisible(true);
         } else {
             return false;
@@ -305,7 +313,7 @@ public class Mosaic extends JFrame
         
         if (autoLayout.isSelected()) {
             int imgNumber = photoList.size();
-            int rowNumber = (int)Math.sqrt(imgNumber);
+            int rowNumber = (int)Math.round(Math.sqrt(imgNumber));
             int colNumber = imgNumber/rowNumber;
             
             int[] layoutArr = new int[rowNumber];
