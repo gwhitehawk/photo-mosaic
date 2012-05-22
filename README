@@ -1,17 +1,13 @@
-Requirements: Python, ImageMagick (I tested scripts only on Linux)
+Requirements: Java, Python, ImageMagick, Unix-like system
 
 Usage: 
 Edit mosaic.sh: 
-PATH_TO_PIC=[ name of your photo directory ]
-RESULT=[ name of the resulting mosaic file ]
-
-Source text file format example:
-pic1 pic2
-pic3 
-
-In the resulting mosaic, 2 photos will be in the first row, one in the second row.
-
+ 
 Run:
-./mosaic.sh [source text file] [final picture width] [ picture border (=space between photos and around them) ]
+./mosaic.sh  
 
-Todo: GUI, choice between custom and optimized tiling
+Swing window opens. Set layout in the string format: #pic_in_row1 #pic_in_row2 ... #pic_in_row[n] . 
+Set final picture width and border (space between photos and around them). Selecting Auto Layout places 
+photos in [sqrt(#photos)] rows, each having about the same number of pictures.
+
+Todo: Port everything to java.  
