@@ -1,8 +1,5 @@
 Requirements: Java, Python, ImageMagick, Unix-like system
 
-Usage: 
-Edit mosaic.sh: 
- 
 Run:
 ./mosaic.sh  
 
