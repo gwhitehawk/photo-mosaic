@@ -3,6 +3,11 @@ import re
 import os
 import sys
 
+class Dimension:
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+
 def get_sizes():
     input = "sizes.txt"
     f = open(input, "r")
@@ -12,7 +17,7 @@ def get_sizes():
         line = line.strip()
         if line != "*":
             width_height = line.split("x")
-            row.append([int(width_height[0]), int(width_height[1])])
+            row.append(Dimension(int(width_height[0]), int(width_height[1])))
         else:
             result.append(row)
             row = []
@@ -20,50 +25,58 @@ def get_sizes():
     f.close()
     return result
 
-def scale_factors(final_width, border):
+def scale_factors(by_rows, final_side, border):
     matrix = get_sizes()
     result = []
-    for row in matrix:
-        row_length = len(row)
-        new_width = []
-        width_sum = 0
-        for cell in row:
-            new_w = 1000*cell[0]/cell[1]
-            new_width.append(new_w)
-            width_sum = width_sum + new_w
+    for side in matrix:
+        side_length = len(side)
+        new_side = []
+        side_sum = 0
+        for cell in side:
+            if (by_rows == "rows"):
+                new_s = 1000*cell.width/cell.height
+            else:
+                new_s = 1000*cell.height/cell.width
+
+            new_side.append(new_s)
+            side_sum = side_sum + new_s
         
-        coeff = float(final_width - border*(row_length+1))/float(width_sum)
-        scale_row = []
+        coeff = float(final_side - border*(side_length+1))/float(side_sum)
+        scale_side = []
         
-        for index in range(row_length):
-            cell_coeff = float(new_width[index]*coeff)/float(row[index][0])
-            scale_row.append(cell_coeff)
+        for index in range(side_length):
+            if (by_rows == "rows"):
+                cell_coeff = float(new_side[index]*coeff)/float(side[index].width)
+            else: 
+                cell_coeff = float(new_side[index]*coeff)/float(side[index].height)
+            scale_side.append(cell_coeff)
             
-        result.append(scale_row)
+        result.append(scale_side)
     
     return result
 
-def write_factors(final_width, border):
+def write_factors(by_rows, final_side, border):
     output = "scale_factors.txt"
     f = open(output, "w")
     
-    matrix = scale_factors(final_width, border)
+    matrix = scale_factors(by_rows, final_side, border)
     
     first = 1
-    for row in matrix:
+    for side in matrix:
         if (first == 0):
             f.write("\n")
         
         if (first == 1):
             first = 0
         
-        for cell in row:
+        for cell in side:
             f.write("%0.4f " % (cell*100))  
     
     f.write("\n")
     f.close()
 
-final_width = int(sys.argv[1])
-border = int(sys.argv[2])
+by_rows = sys.argv[1]
+final_side = int(sys.argv[2])
+border = int(sys.argv[3])
 
-write_factors(final_width, border)
+write_factors(by_rows, final_side, border)

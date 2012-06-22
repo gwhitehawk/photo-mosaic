@@ -65,7 +65,7 @@ class CheckBoxList extends JPanel {
 
         ImageIcon icon = new ImageIcon(image.getPath());
         Image img = icon.getImage();  
-        Image thumb = img.getScaledInstance(100, 67,  java.awt.Image.SCALE_FAST);  
+        Image thumb = img.getScaledInstance(75, 75,  java.awt.Image.SCALE_FAST);  
         ImageIcon thumbIcon = new ImageIcon(thumb);  
         JLabel imageThumb = new JLabel(thumbIcon);
        
@@ -87,14 +87,17 @@ public class Mosaic extends JFrame
     JMenuItem fMenuClose = null;
 
     JCheckBox autoLayout;
+    JCheckBox byColumns;
+
     CheckBoxList checkBoxArea;
     JScrollPane checkScroll;
+
     JTextField layoutField;
-    JTextField widthField;
+    JTextField sizeField;
     JTextField borderField;
 
     JLabel layoutLabel;
-    JLabel widthLabel;
+    JLabel sizeLabel;
     JLabel borderLabel;
 
     ImageFilter fImageFilter = new ImageFilter();
@@ -129,16 +132,23 @@ public class Mosaic extends JFrame
         grpLayout.setHorizontalGroup(
             grpLayout.createSequentialGroup()
                 .addGroup(grpLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(autoLayout)
+                    .addGroup(grpLayout.createSequentialGroup()
+                        .addGroup(grpLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                            .addComponent(autoLayout)
+                        )
+                        .addGroup(grpLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                            .addComponent(byColumns)
+                        )
+                    )
                     .addGroup(grpLayout.createSequentialGroup()
                         .addGroup(grpLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                             .addComponent(layoutLabel)
-                            .addComponent(widthLabel)
+                            .addComponent(sizeLabel)
                             .addComponent(borderLabel)
                         )
                         .addGroup(grpLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                             .addComponent(layoutField)
-                            .addComponent(widthField)
+                            .addComponent(sizeField)
                             .addComponent(borderField)
                         )
                     )
@@ -148,14 +158,17 @@ public class Mosaic extends JFrame
 
         grpLayout.setVerticalGroup(
             grpLayout.createSequentialGroup()
-                .addComponent(autoLayout)
+                .addGroup(grpLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(autoLayout)
+                    .addComponent(byColumns)
+                )
                 .addGroup(grpLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(layoutLabel)
                     .addComponent(layoutField)
                 )
                 .addGroup(grpLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(widthLabel)
-                    .addComponent(widthField)
+                    .addComponent(sizeLabel)
+                    .addComponent(sizeField)
                 )
                 .addGroup(grpLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(borderLabel)
@@ -181,19 +194,23 @@ public class Mosaic extends JFrame
         autoLayout = new JCheckBox("Auto Layout");
         autoLayout.setToolTipText("For n photos, creates a ~sqrt(n) x ~sqrt(n) grid.");
 
+        byColumns = new JCheckBox("By Columns");
+        byColumns.setToolTipText("If checked, aligns photos in columns, else by rows.");
+
         checkBoxArea = new CheckBoxList();
         checkScroll = new JScrollPane(checkBoxArea); 
         
         layoutField = new JTextField(100);
         layoutField.setToolTipText("#Pic in each row, separated by space.");
 
-        widthField = new JTextField(50);
+        sizeField = new JTextField(50);
+        sizeField.setToolTipText("If by columns, set height, else set width.");
         borderField = new JTextField(50);
 
         layoutLabel = new JLabel("Layout:");
-        widthLabel = new JLabel("Mosaic Width:");
+        sizeLabel = new JLabel("Side:");
         borderLabel = new JLabel("Border:");
- 
+
         contentPane.setLayout(layout(contentPane));
 
         // Use the helper method makeMenuItem
@@ -293,10 +310,10 @@ public class Mosaic extends JFrame
         return true;
     } // addFile
 
-    /** Save layout into a pic source file;  width and border into a text file. **/
+    /** Save layout into a pic source file;  size and border into a text file. **/
     boolean saveParams() {
         String layout = layoutField.getText();
-        String width =  widthField.getText();
+        String side =  sizeField.getText();
         String border = borderField.getText();
         Component[] components = checkBoxArea.getComponents();
         int startPhotoNum = photoList.size();
@@ -351,8 +368,18 @@ public class Mosaic extends JFrame
 
         success = printToFile(tempBuffer, sourceFile, true);
 
-        success = success &&printToFile(width, paramFile, false);
+        success = success && printToFile(side, paramFile, false);
         success = success && printToFile(border, paramFile, true);
+       
+        String byColStr = "by columns";
+
+        if (byColumns.isSelected()) {
+            byColStr = "columns";
+        } else {
+            byColStr = "rows";
+        }
+
+        success = success && printToFile(byColStr, paramFile, true); 
        
         JFileChooser fc = fileChooserDialog("Save As", ".");
 
