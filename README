@@ -1,10 +1,11 @@
-Requirements: Java, Python, ImageMagick, Unix-like system
+Requirements: Java, ImageMagick, Unix-like system
 
-Run:
-./mosaic.sh  
+Compile and run:
+javac CreateMosaic.java
+java CreateMosaic
 
 Swing window opens. Set layout in the string format: #pic_in_row1 #pic_in_row2 ... #pic_in_row[n] . 
 Set final picture width and border (space between photos and around them). Selecting Auto Layout places 
-photos in [sqrt(#photos)] rows, each having about the same number of pictures.
+photos in [sqrt(#photos)] rows, each having about the same number of pictures. 
 
-Todo: Port everything to java.  
+Select "Add" to add photos, "Apply" to generate mosaic, "Quit" to quit the app.

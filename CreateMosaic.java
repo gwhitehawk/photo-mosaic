@@ -572,5 +572,4 @@ public class CreateMosaic extends JFrame
         f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         f.setVisible (true);
     } // main
-
 } // class CreateMosaic
