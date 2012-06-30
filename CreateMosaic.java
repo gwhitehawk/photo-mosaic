@@ -1,7 +1,3 @@
-//backend logic including image magick 
-//Image data: Dimension(width, height) 
-//Image layout: Dimension[][] 
-
 import java.lang.*;
 import java.util.*; 
 import java.io.*;
@@ -580,20 +576,3 @@ public class CreateMosaic extends JFrame
     } // main
 
 } // class CreateMosaic
-
-/*public class CreateMosaic {
-    public static void main(String[] args) {
-        ArrayList<String> imgs = new ArrayList<String>();
-        String layoutStr = "1 1";
-        String widthStr = "200";
-        String borderStr = "2";
-        boolean byRows = true;
-
-        String testImg = "/Users/miroslavasotakova/programming/Python/Mosaic/./test.jpg";
-        imgs.add(testImg);
-        imgs.add(testImg);
-
-        Mosaic newMosaic = new Mosaic(layoutStr, widthStr, borderStr, byRows, imgs);
-        newMosaic.saveMosaic();
-    }
-}*/
